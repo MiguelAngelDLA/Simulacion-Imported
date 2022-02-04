@@ -1,4 +1,18 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "ADIS16448[4]": {
+        "header": {
+          "open": true
+        }
+      },
+      "ADXRS450[0]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -20,10 +34,25 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "image": "C:\\Users\\migue\\OneDrive\\Escritorio\\campo.jpg",
         "window": {
           "visible": true
         }
       }
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      "DriveSubsystem": {
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "Field": {
+        "open": true
+      },
+      "open": true
     }
   }
 }

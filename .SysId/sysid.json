@@ -1,9 +1,11 @@
 {
   "SysId": {
-    "Analysis Type": "General Mechanism",
+    "Analysis Type": "Drivetrain",
     "AnalyzerJSONLocation": "C:\\Users\\migue\\OneDrive\\Documentos\\VisualStudio Code\\Java\\Caracterizaciones\\caracterizacion apollo\\characterization-data20211217-1417_new.json",
     "NetworkTables Settings": {
       "serverTeam": "4400"
-    }
+    },
+    "mode": "Client",
+    "serverTeam": "10.44.0.2"
   }
 }

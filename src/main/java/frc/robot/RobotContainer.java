@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.autonomousCommands.GalacticSearch;
+import frc.robot.autonomousCommands.FourBallsRed;
+import frc.robot.autonomousCommands.ThreeBallsRed;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.trajectories.Path;
@@ -69,6 +70,6 @@ public class RobotContainer {
 	public Command getAutonomousCommand() {
 
 		// Run path following command, then stop at the end.
-		return new GalacticSearch(m_robotDrive);
+		return new ThreeBallsRed(m_robotDrive);
 	}
 }

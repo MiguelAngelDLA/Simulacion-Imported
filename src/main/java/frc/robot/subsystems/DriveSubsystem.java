@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.simulation.ADIS16448_IMUSim;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -45,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
 			Constants.DriveConstants.kRightEncoderPorts[1], Constants.DriveConstants.kRightEncoderReversed);
 
 	// The gyro sensor
-	private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+	private final ADIS16448_IMU m_gyro = new ADIS16448_IMU();
 
 	// Odometry class for tracking robot pose
 	private final DifferentialDriveOdometry m_odometry;
@@ -54,9 +56,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public DifferentialDrivetrainSim m_drivetrainSimulator;
 	private EncoderSim m_leftEncoderSim;
 	private EncoderSim m_rightEncoderSim;
+
+	private Servo servo;
 	// The Field2d class shows the field in the sim GUI
 	private Field2d m_fieldSim;
-	private ADXRS450_GyroSim m_gyroSim;
+	private ADIS16448_IMUSim m_gyroSim;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
@@ -82,7 +86,7 @@ public class DriveSubsystem extends SubsystemBase {
 			 * leftFront.setInverted(InvertType.None); leftFront.setSensorPhase(false);
 			 * leftRear.setInverted(InvertType.None); rightFront.setSensorPhase(false);
 			 */
-			m_gyroSim = new ADXRS450_GyroSim(m_gyro);
+			m_gyroSim = new ADIS16448_IMUSim(m_gyro);
 
 			// the Field2d class lets us visualize our robot in the simulation GUI.
 			m_fieldSim = new Field2d();
@@ -130,7 +134,7 @@ public class DriveSubsystem extends SubsystemBase {
 		 * rightSim.setBusVoltage(RobotController.getBatteryVoltage());
 		 */
 
-		m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
+		m_gyroSim.setGyroAngleZ(-m_drivetrainSimulator.getHeading().getDegrees());
 	}
 
 	/**
@@ -147,6 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void setFieldTrajectory(Trajectory traj) {
 		m_fieldSim.getObject("trayectoria").setTrajectory(traj);
 	}
+
 	/**
 	 * Returns the currently-estimated pose of the robot.
 	 *
@@ -185,10 +190,12 @@ public class DriveSubsystem extends SubsystemBase {
 						Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
 				Constants.DriveConstants.kDriveKinematics, this::getWheelSpeeds,
 				new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+
 				new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
 				// RamseteCommand passes volts to the callback
 				this::tankDriveVolts, this);
 
+		SmartDashboard.putNumber("Tiempo en realizar Trayectoria", trajectory.getTotalTimeSeconds());
 		return rCommand.andThen(() -> this.tankDriveVolts(0, 0));
 	}
 
@@ -196,7 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Resets the odometry to the specified pose.
 	 *
 	 * @param pose
-	 *            The pose to which to set the odometry.
+	 *             The pose to which to set the odometry.
 	 */
 	public void resetOdometry(Pose2d pose) {
 		// resetEncoders();
@@ -220,9 +227,9 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Controls the left and right sides of the drive directly with voltages.
 	 *
 	 * @param leftVolts
-	 *            the commanded left output
+	 *                   the commanded left output
 	 * @param rightVolts
-	 *            the commanded right output
+	 *                   the commanded right output
 	 */
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
 		var batteryVoltage = RobotController.getBatteryVoltage();
@@ -273,7 +280,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * slowly.
 	 *
 	 * @param maxOutput
-	 *            the maximum output to which the drive will be constrained
+	 *                  the maximum output to which the drive will be constrained
 	 */
 	public void setMaxOutput(double maxOutput) {
 		m_drive.setMaxOutput(maxOutput);
